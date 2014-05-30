@@ -1,0 +1,4 @@
+pod 'FlatUIKit'
+pod 'PPRevealSideViewController', '~> 1.1.0'
+pod 'SIAlertView'
+pod 'MJPopupViewController', '~> 0.4'
