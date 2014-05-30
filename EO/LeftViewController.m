@@ -10,6 +10,8 @@
 #import <Parse/Parse.h>
 #import <FacebookSDK/FacebookSDK.h>
 #import <FlatUIKit.h>
+#import "FriendsViewController.h"
+#import "MapViewController.h"
 
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:.65]
 
@@ -260,9 +262,27 @@
                 break;
         }
     }
+    if ([cell.textLabel.text isEqualToString:[[self.revealSideViewController rootViewController] title]]) {
+        [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    }
     
     return cell;
 }
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.row == 0) {
+        MapViewController *mv = [[MapViewController alloc]init];
+        UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:mv];
+        [nav.navigationBar configureFlatNavigationBarWithColor:[UIColor turquoiseColor]];
+        [nav.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
+        [self.revealSideViewController popViewControllerWithNewCenterController:nav animated:YES];
+    }
+    if (indexPath.row == 1) {
+        FriendsViewController *fv = [[FriendsViewController alloc]initWithStyle:UITableViewStyleGrouped];
+        [self.revealSideViewController popViewControllerWithNewCenterController:fv animated:YES];
+    }
+}
+
 #pragma mark - Button Methods
 
 - (void)goAccount{

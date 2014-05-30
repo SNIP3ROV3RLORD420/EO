@@ -38,10 +38,10 @@
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    UIImageView *imageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"SpashScreen.png"]];
+    UIImageView *imageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Default-568h.png"]];
+    [imageView setFrame:CGRectMake(0, -64, 320, 568)];
     
     if ([PFUser currentUser]) {
-        
     }
     
     if ([PFUser currentUser] || [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]){

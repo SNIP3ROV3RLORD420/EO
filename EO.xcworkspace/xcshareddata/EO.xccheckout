@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>B8AB96A8-CD63-43C7-96B7-7B9714C76695</string>
+	<key>IDESourceControlProjectName</key>
+	<string>EO</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>60D81A4B-0A85-4DA1-8459-6C53C9D18334</key>
+		<string>https://github.com/SNIP3ROV3RLORD420/EO.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>EO.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>60D81A4B-0A85-4DA1-8459-6C53C9D18334</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/SNIP3ROV3RLORD420/EO.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>60D81A4B-0A85-4DA1-8459-6C53C9D18334</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>60D81A4B-0A85-4DA1-8459-6C53C9D18334</string>
+			<key>IDESourceControlWCCName</key>
+			<string>EO</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -26,6 +26,7 @@
     UIView *bottom;
     UISearchBar *search;
     UIButton *filter;
+    UIView *line;
     
     UIButton *eventMenu;
     
@@ -47,7 +48,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         /*creating the map view*/
-        map = [[MKMapView alloc]initWithFrame:CGRectMake(0, 0, 320, 504)];
+        map = [[MKMapView alloc]initWithFrame:CGRectMake(0, 44, 320, 504-44)];
         map.showsUserLocation = YES;
         map.userTrackingMode = MKUserTrackingModeFollow;
         map.delegate = self;
@@ -81,7 +82,7 @@
         [filter addTarget:self action:@selector(filter:) forControlEvents:UIControlEventTouchUpInside];
         
         //creating the little divider
-        UIView *line = [[UIView alloc]initWithFrame:CGRectMake(240, 5, 1, 34)];
+        line = [[UIView alloc]initWithFrame:CGRectMake(240, 5, 1, 34)];
         line.backgroundColor = [UIColor lightGrayColor];
         
         [searchNavBar addSubview:line];
@@ -89,12 +90,23 @@
         [searchNavBar addSubview:filter];
         
         [self.view addSubview:searchNavBar];
-    
+        
+        /*creating the table view*/
+        eventTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 510, 320, 0) style:UITableViewStyleGrouped];
+        eventTableView.dataSource = self;
+        eventTableView.delegate = self;
+        eventTableView.separatorInset = UIEdgeInsetsZero;
+        eventTableView.backgroundColor = [UIColor whiteColor];
+        eventTableView.showsVerticalScrollIndicator = NO;
+        eventTableView.layer.masksToBounds = YES;
+        [eventTableView setContentInset:UIEdgeInsetsMake(-40, 0, -40, 0)];
+        [self.view addSubview:eventTableView];
+        
         //adding the menu button to the view
-        eventMenu = [[UIButton alloc]initWithFrame:CGRectMake(20, 430, 45, 45)];
-        eventMenu.layer.cornerRadius = 45/2;
+        eventMenu = [[UIButton alloc]initWithFrame:CGRectMake(20, 440, 40, 40)];
+        eventMenu.layer.cornerRadius = 10;
         eventMenu.layer.borderWidth = .5f;
-        eventMenu.layer.borderColor = [UIColor blackColor].CGColor;
+        eventMenu.layer.borderColor = [UIColor darkGrayColor].CGColor;
         [eventMenu setImage:[UIImage imageNamed:@"menu.png"] forState:UIControlStateNormal];
         eventMenu.backgroundColor = [UIColor whiteColor];
         [eventMenu setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
@@ -104,33 +116,19 @@
         eventMenu.clipsToBounds = YES;
         [self.view addSubview:eventMenu];
         
-        /*creating the table view*/
-        eventTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 504, 320, 0) style:UITableViewStyleGrouped];
-        eventTableView.dataSource = self;
-        eventTableView.delegate = self;
-        eventTableView.separatorInset = UIEdgeInsetsZero;
-        eventTableView.backgroundColor = [UIColor whiteColor];
-        eventTableView.showsVerticalScrollIndicator = NO;
-        eventTableView.layer.shadowOffset = CGSizeMake(0, -2);
-        eventTableView.layer.shadowRadius = 4.0f;
-        eventTableView.layer.shadowOpacity = 0.80f;
-        eventTableView.layer.shadowPath = [[UIBezierPath bezierPathWithRect:eventTableView.layer.bounds] CGPath];
-        [self.view addSubview:eventTableView];
-        [self.view bringSubviewToFront:eventTableView];
-        [self.view bringSubviewToFront:searchNavBar];
-        
     }
     return self;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad{
     [super viewDidLoad];
+    
+    events = [[NSMutableArray alloc]initWithObjects:@"",@"",@"",@"", nil];
+    
     self.title = @"Map";
+    self.view.backgroundColor = [UIColor whiteColor];
     
-    self.revealSideViewController.delegate = self;
-    
-    self.revealSideViewController.fakeiOS7StatusBarColor = [UIColor darkGrayColor];
+    [self.revealSideViewController setFakeiOS7StatusBarColor:[UIColor darkGrayColor]];
     
     UIBarButtonItem *menu = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"menu.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(menu:)];
     [menu configureFlatButtonWithColor:UIColorFromRGB(0x47c9af) highlightedColor:[UIColor greenSeaColor] cornerRadius:3.0f];
@@ -146,6 +144,9 @@
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     [self menuHide];
+   // [self.revealSideViewController setDelegate:self];
+    [self.revealSideViewController setPanInteractionsWhenClosed:PPRevealSideInteractionNavigationBar];
+    [self.revealSideViewController setPanInteractionsWhenOpened:PPRevealSideInteractionContentView | PPRevealSideInteractionNavigationBar];
 }
 
 - (void)didReceiveMemoryWarning
@@ -168,8 +169,25 @@
     [UIView setAnimationDelay:0.0];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
     
-    eventTableView.frame = CGRectMake(0, 300, 320, 504);
-    map.frame = CGRectMake(0, 0, 320, 300);
+    searchNavBar.frame = CGRectMake(0, 0, 320, 0);
+    [filter setAlpha:0];
+    [filter setFrame:CGRectMake(240, 0, 80, 0)];
+    [search setAlpha:0];
+    [line setAlpha:0];
+    [line setFrame:CGRectMake(240, 5, 1, 0)];
+    
+    if (events.count >= 4 && events.count) {
+        eventTableView.frame = CGRectMake(0, 504 - 280, 320, 280);
+    }
+    else if (events.count == 0){
+        eventTableView.frame = CGRectMake(0, 504 - 70, 320, 70);
+    }
+    else{
+        eventTableView.frame = CGRectMake(0, 504 - (70 * events.count), 320, (70 * events.count));
+    }
+    [eventMenu setAlpha:0.0f];
+
+    map.frame = CGRectMake(0, 0 - eventTableView.frame.size.height, 320, 504);
     
     [UIView commitAnimations];
     
@@ -191,10 +209,20 @@
     [UIView setAnimationDelay:0.0];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
     
-    eventTableView.frame = CGRectMake(0, 504, 320, 504);
+    eventTableView.frame = CGRectMake(0, 520, 320, 0);
+    [eventMenu setAlpha:0.9f];
     map.frame = CGRectMake(0, 0, 320, 504);
+    searchNavBar.frame = CGRectMake(0, 0, 320, 44);
+    [filter setAlpha:1];
+    [filter setFrame:CGRectMake(240, 0, 80, 44)];
+    [search setAlpha:1];
+    [search setFrame:CGRectMake(0, 0, 240, 44)];
+    [line setAlpha:1];
+    [line setFrame:CGRectMake(240, 5, 1, 34)];
     
     [UIView commitAnimations];
+    
+    [self.view sendSubviewToBack:eventTableView];
 }
 
 #pragma mark - Class Methods
@@ -234,11 +262,31 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 10; //later return events.count
+    return events.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     return 0;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    if (events.count == 0) {
+        return 70;
+    }
+    return 0;
+}
+
+- (UIView*)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    if (events.count == 0) {
+        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 70)];
+        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(80, 25, 160, 20)];
+        label.text = @"No Events Nearby";
+        label.font = [UIFont flatFontOfSize:20];
+        label.textColor = [UIColor lightGrayColor];
+        [view addSubview:label];
+        return view;
+    }
+    return nil;
 }
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -258,12 +306,16 @@
 
 - (void)pprevealSideViewController:(PPRevealSideViewController *)controller didPushController:(UIViewController *)pushedController{
     map.userInteractionEnabled = NO;
-    NSLog(@"Delegate will push");
+    searchNavBar.userInteractionEnabled = NO;
+    eventMenu.userInteractionEnabled = NO;
 }
 
 - (void)pprevealSideViewController:(PPRevealSideViewController *)controller didPopToController:(UIViewController *)centerController{
-    map.userInteractionEnabled = YES;
-    NSLog(@"Delegate will pop");
+    if (centerController == self) {
+        map.userInteractionEnabled = YES;
+        searchNavBar.userInteractionEnabled = YES;
+        eventMenu.userInteractionEnabled = YES;
+    }
 }
 
 #pragma mark - FilterViewControllerDelegate
@@ -289,33 +341,5 @@
 
 - (void)searchDisplayControllerDidEndSearch:(UISearchDisplayController *)controller{
     [filter setHidden:NO];
-}
-
-#pragma mark - UIScrollViewDelegate
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    
-    CGRect mFrame = map.frame;
-    CGRect tFrame = eventTableView.frame;
-    CGFloat diff = scrollView.contentOffset.y - self.lastContentOffset;
-    
-    if (scrollView.contentOffset.y > self.lastContentOffset && tFrame.origin.y >= 0){
-        NSLog(@"dif: %f T Origin: %f", diff, tFrame.origin.y);
-        mFrame.size.height -= diff;
-        tFrame.origin.y -= diff;
-        [map setFrame:mFrame];
-        [eventTableView setFrame:tFrame];
-    }
-    else if (scrollView.contentOffset.y < self.lastContentOffset && tFrame.origin.y <= 300){
-        NSLog(@"fired");
-        mFrame.size.height -= diff;
-        tFrame.origin.y -= diff;
-        [map setFrame:mFrame];
-        [eventTableView setFrame:tFrame];
-    }
-    else if (tFrame.origin.y > 300){
-        [self menuHide];
-    }
-    self.lastContentOffset = scrollView.contentOffset.y;
 }
 @end
